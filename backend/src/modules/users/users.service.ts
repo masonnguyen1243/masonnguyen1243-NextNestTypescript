@@ -6,6 +6,7 @@ import { User } from '@/modules/users/schemas/user.schema';
 import { Model } from 'mongoose';
 import { hashPasswordHelper } from '@/helpers/utils';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +24,7 @@ export class UsersService {
     return false;
   };
 
+  //Register
   async create(createUserDto: CreateUserDto) {
     const { name, email, password } = createUserDto;
     //Check if email already exists
@@ -44,6 +46,7 @@ export class UsersService {
     };
   }
 
+  //Get All Users
   async findAll(query: string, current: number, pageSize: number) {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
@@ -70,11 +73,22 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  //Update user
+  async update(updateUserDto: UpdateUserDto) {
+    return await this.userModel.updateOne(
+      { _id: updateUserDto._id },
+      { ...updateUserDto },
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  //Delete user
+  async remove(_id: string) {
+    //Check id
+    if (mongoose.isValidObjectId(_id)) {
+      //delete
+      return await this.userModel.deleteOne({ _id });
+    } else {
+      throw new BadRequestException('Invalid user ID');
+    }
   }
 }
