@@ -11,6 +11,7 @@ import {
 import { UsersService } from '@/modules/users/users.service';
 import { CreateUserDto } from '@/modules/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/modules/users/dto/update-user.dto';
+import { Public } from '@/decorator/customize';
 
 @Controller('users')
 export class UsersController {
@@ -18,12 +19,14 @@ export class UsersController {
 
   //Register
   @Post()
+  @Public()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   //Get All Users
   @Get()
+  @Public()
   async findAll(
     @Query() query: string,
     @Query('current') current: string,
