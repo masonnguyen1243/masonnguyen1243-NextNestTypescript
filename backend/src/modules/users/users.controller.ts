@@ -37,11 +37,13 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
+  //Update user
   @Patch()
   update(@Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(updateUserDto);
   }
 
+  //Delete user
   @Delete(':_id')
   remove(@Param('_id') id: string) {
     return this.usersService.remove(id);
