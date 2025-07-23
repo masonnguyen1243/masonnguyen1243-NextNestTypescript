@@ -1,4 +1,4 @@
-import { Restaurant } from '@/modules/restaurants/schemas/restaurant.schema';
+import { Restaurant } from '@/restaurants/schemas/restaurant.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 
