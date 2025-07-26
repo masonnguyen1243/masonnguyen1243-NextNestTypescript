@@ -28,7 +28,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         console.log(">>> check res", res);
 
-        if (!res.statusCode) {
+        if (res.statusCode === 201) {
           //returning user object
           return {
             _id: res?.data?.user?._id,
