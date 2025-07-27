@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { hashPasswordHelper } from '@/helpers/utils';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
-import { CreateAuthDto } from '@/auth/dto/create-auth.dto';
+import { CodeAuthDto, CreateAuthDto } from '@/auth/dto/create-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import * as dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -123,6 +123,7 @@ export class UsersService {
       isActive: false,
       codeId: codeId,
       codeExpired: dayjs().add(5, 'minutes').toDate(),
+      // codeExpired: dayjs().add(30, 'seconds').toDate(),
     });
 
     //Send email verification
@@ -140,5 +141,26 @@ export class UsersService {
     return {
       _id: user._id,
     };
+  }
+
+  async handleActive(data: CodeAuthDto) {
+    const user = await this.userModel.findOne({
+      _id: data._id,
+      codeId: data.code,
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid code or expired');
+    }
+
+    //check if code is expired
+    const isBeforeCheck = dayjs().isBefore(user.codeExpired);
+    if (isBeforeCheck) {
+      //valid -> update user
+      await this.userModel.updateOne({ _id: data._id }, { isActive: true });
+      return { isBeforeCheck };
+    } else {
+      throw new BadRequestException('Code expired');
+    }
   }
 }
