@@ -163,4 +163,37 @@ export class UsersService {
       throw new BadRequestException('Code expired');
     }
   }
+
+  async retryActive(email: string) {
+    //Check email
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new BadRequestException('Tài khoản không tồn tại');
+    }
+
+    if (user.isActive) {
+      throw new BadRequestException('Tài khoản đã được kích hoạt');
+    }
+
+    const codeId = uuidv4();
+
+    //update user
+    await user.updateOne({
+      codeId: codeId,
+      codeExpired: dayjs().add(5, 'minutes').toDate(),
+    });
+
+    //send email
+    this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Activate your account',
+      template: 'register',
+      context: {
+        name: user?.name ?? user?.email,
+        activationCode: codeId,
+      },
+    });
+
+    return { _id: user._id };
+  }
 }

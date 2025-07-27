@@ -38,6 +38,12 @@ export class AuthController {
     return this.authService.checkCode(checkCodeDto);
   }
 
+  @Post('retry-active')
+  @Public()
+  retryActive(@Body('email') email: string) {
+    return this.authService.retryActive(email);
+  }
+
   @Get('mail')
   @Public()
   testmail() {
