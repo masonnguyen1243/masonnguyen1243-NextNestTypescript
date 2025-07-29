@@ -42,12 +42,14 @@ export class UsersController {
 
   //Update user
   @Patch()
+  @Public()
   update(@Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(updateUserDto);
   }
 
   //Delete user
   @Delete(':_id')
+  @Public()
   remove(@Param('_id') id: string) {
     return this.usersService.remove(id);
   }
