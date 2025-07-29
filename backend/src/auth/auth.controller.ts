@@ -23,7 +23,14 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ResponseMessage('Login successful')
   handleLogin(@Request() req) {
+    console.log(req.user);
     return this.authService.login(req.user);
+  }
+
+  @Get('profile')
+  getProfile(@Request() req) {
+    console.log(req.user);
+    return req.user;
   }
 
   @Post('register')
